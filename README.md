@@ -1,4 +1,9 @@
 # 환율 계산 모듈
+
+## ✅ UI
+![img1](https://user-images.githubusercontent.com/49400801/137638038-f240a00c-01de-4c47-8b16-293631ccc9b4.png)
+![img2](https://user-images.githubusercontent.com/49400801/137638041-3866284f-419f-4df3-8c2f-2900046ed13c.png)
+
 ## ✅ 기능 요구사항
 - [x] 송금국가는 미국으로 고정. 통화는 미국달러(USD) 확장성 고려
 - [x] 수취국가는 한국, 일본, 필리핀 세 군데 중 하나를 select box로 선택, 각각 통화는 KRW, JPY, PHP.
