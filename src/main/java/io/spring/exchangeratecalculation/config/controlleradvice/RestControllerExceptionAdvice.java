@@ -3,6 +3,7 @@ package io.spring.exchangeratecalculation.config.controlleradvice;
 import io.spring.exchangeratecalculation.config.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -44,6 +45,14 @@ public class RestControllerExceptionAdvice {
         log.error("===================== Handler MethodArgumentNotValidException =====================");
         e.printStackTrace();
         return getErrorResponseByBindingResult(e.getBindingResult(), HttpStatus.BAD_REQUEST, "유효하지 않은 값이 있습니다.");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BindException.class)
+    public ErrorResponse handlerBindException(BindException e, HttpServletRequest req) {
+        log.error("===================== Handler handlerBindException =====================");
+        e.printStackTrace();
+        return getErrorResponseByBindingResult(e.getBindingResult(), HttpStatus.BAD_REQUEST, "요청이 올바르지 않습니다.");
     }
 
     private ErrorResponse getErrorResponseByBindingResult(BindingResult bindingResult, HttpStatus status, String defaultMessage) {

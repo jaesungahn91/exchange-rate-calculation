@@ -23,7 +23,7 @@ public class ExchangeRateService {
     private final WebClient webClient;
 
     @Cacheable(value = "exchangeRatesCache")
-    public ExchangeRate.Info getApiExchangeRate() {
+    public ExchangeRate.Info getApiExchangeRates() {
         DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory(BASE_URL);
         uriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
 

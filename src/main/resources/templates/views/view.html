@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>exchange-rate</title>
+</head>
+<body>
+<div>
+    <h2>환율 계산</h2>
+    <p>송금국가: 미국(USD)</p>
+    <p>수취국가:
+        <select id="countrySelect"></select>
+    </p>
+    <p>환율: <span id="exchangeRate"></span></p>
+    <p>송금액: <input id="amount" type="number"/></p>
+    <p><button onclick="calculateExchangeRate()">Submit</button></p>
+    <p id="result"></p>
+</div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(function () {
+        $('#countrySelect').change(function (){
+            getExchangeRate();
+        });
+
+        settingReceptionCountry();
+    });
+
+    const settingReceptionCountry = () => {
+        const url = '/api/exchange-rate/countries';
+        const data = {}
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: data,
+            dataType: 'json'
+        })
+        .done(function (res){
+            $('#countrySelect').empty();
+            $('#countrySelect').append('<option value="">선택</option>');
+            for(const item of res.data) {
+                $('#countrySelect').append('<option value="'+item.code+'">'+item.name+'</option>');
+            }
+        })
+        .fail(function(xhr, status, errorThrown) {
+            console.log(xhr.responseJSON);
+            console.log(errorThrown);
+            console.log(status);
+        });
+    }
+
+    const getExchangeRate = () => {
+        const url = '/api/exchange-rate';
+        const data = {
+            remitCountry:'USD',
+            receptionCountry: $('#countrySelect').val()
+        }
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: data,
+            dataType: 'json'
+        })
+        .done(function (res){
+            $('#exchangeRate').empty();
+            $('#exchangeRate').append(res.data.exchangeRate + ' ' + res.data.currency);
+
+        })
+        .fail(function(xhr, status, errorThrown) {
+            console.log(xhr.responseJSON);
+            console.log(errorThrown);
+            console.log(status);
+        });
+    }
+
+    const calculateExchangeRate = () => {
+        const url = '/api/exchange-rate/calculation';
+        const data = {
+            remitCountry:'USD',
+            receptionCountry: $('#countrySelect').val(),
+            amount: $('#amount').val()
+        }
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: data,
+            dataType: 'json'
+        })
+        .done(function (res){
+            $('#result').empty();
+            $('#result').append('<span>수취금액은 ' + res.data.amount + ' ' + res.data.currency + '입니다.</span>');
+        })
+        .fail(function(xhr, status, errorThrown) {
+            $('#result').empty();
+            $('#result').append('<span style="color: red">'+xhr.responseJSON.message+'</span>');
+        });
+    }
+</script>
+</html>

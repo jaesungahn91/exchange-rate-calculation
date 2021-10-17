@@ -1,5 +1,6 @@
 package io.spring.exchangeratecalculation.controller;
 
+import io.spring.exchangeratecalculation.config.validation.ValidationSequence;
 import io.spring.exchangeratecalculation.domain.Country;
 import io.spring.exchangeratecalculation.domain.ExchangeRate;
 import io.spring.exchangeratecalculation.enums.CountryType;
@@ -27,13 +28,24 @@ public class ExchangeRateController {
     }
 
     @GetMapping
-    public Object getExchangeRate(@RequestBody @Validated ExchangeRate.Request request) {
-        ExchangeRate.Info exchangeRateInfo = exchangeRateService.getApiExchangeRate();
+    public Object getExchangeRates(@ModelAttribute @Validated ExchangeRate.Request request) {
+        ExchangeRate.Info exchangeRateInfo = exchangeRateService.getApiExchangeRates();
 
         double exchangeRate = Optional.ofNullable(
                 exchangeRateInfo.getQuotes().get(request.getRemitCountry()+request.getReceptionCountry())
-                ).orElseThrow(() -> new RuntimeException("존재하지 않는 환율입니다."));
+                ).orElseThrow(() -> new RuntimeException("송금, 수취 국가를 확인해주세요."));
 
         return new ExchangeRate.Response(exchangeRate, request);
+    }
+
+    @GetMapping("calculation")
+    public Object calculateExchangeRate(@ModelAttribute @Validated(ValidationSequence.class) ExchangeRate.CalculationRequest calculationRequest) {
+        ExchangeRate.Info exchangeRateInfo = exchangeRateService.getApiExchangeRates();
+
+        double exchangeRate = Optional.ofNullable(
+                exchangeRateInfo.getQuotes().get(calculationRequest.getRemitCountry()+calculationRequest.getReceptionCountry())
+        ).orElseThrow(() -> new RuntimeException("송금, 수취 국가를 확인해주세요."));
+
+        return new ExchangeRate.CalculationResponse(exchangeRate, calculationRequest);
     }
 }
